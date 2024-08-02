@@ -28,6 +28,13 @@ async def upload_image(file: UploadFile = File(...)):
         # Call your predict function
         result = await predict(image)
 
+             # Check the length of the result
+        if len(result) != 5:
+            # Save the image with a name based on the result
+            filename = f"failedimages/{result}.png"
+            with open(filename, "wb") as f:
+                f.write(contents)
+            
         return JSONResponse(content={"prediction": result})
     
     except Exception as e:

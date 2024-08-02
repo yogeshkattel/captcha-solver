@@ -20,7 +20,7 @@ except:
     pass
 
 # Load pre-trained model
-pretrained_model = load_model('./Models/02_captcha_to_text/203404030319/model.h5',compile=False)
+pretrained_model = load_model('./Models/02_captcha_to_text/202408011255/model.h5',compile=False)
 
 # Define configs
 configs = ModelConfigs()

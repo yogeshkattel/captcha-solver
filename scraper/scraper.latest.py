@@ -28,6 +28,22 @@ handler.setFormatter(colorlog.ColoredFormatter(
 logger = colorlog.getLogger()
 logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
+def solve_captcha_ai(image_path):
+    url = "https://captcha.nepdevtech.com/upload-image/"
+    headers = {
+        "accept": "application/json",
+        "accept-language": "en-US,en;q=0.8",
+        "sec-ch-ua": "\"Not)A;Brand\";v=\"99\", \"Brave\";v=\"127\", \"Chromium\";v=\"127\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "sec-gpc": "1"
+    }
+    files = {'file': (image_path, open(image_path, 'rb'), 'image/jpeg')}
+    response = requests.post(url, headers=headers, files=files)
+    return response.json()
 
 def solveCaptcha(imagePath, token):
     genai.configure(api_key=token)
@@ -35,9 +51,11 @@ def solveCaptcha(imagePath, token):
     model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest")
 
     response = model.generate_content([sample_file, 'can you extract the text from the image and put the text inside ""'])
+    resData = response.candidates[0].content.parts[0].text
+    
     pattern = r'"(.*?)"'
-    matches = re.findall(pattern, response.text)
-    logger.info(f'Gemini response: {response.text}')
+    matches = re.findall(pattern, resData)
+    logger.info(f'Gemini response: {resData}')
     return matches[0]
 
 def download_image(image_url, save_as, session, token):
@@ -54,8 +72,13 @@ def download_image(image_url, save_as, session, token):
         logger.info(f'Image saved as {save_as}')
         time.sleep(2)
         try:
+           
             predictImage = solveCaptcha(f'./{save_as}', token)
-            if len(predictImage) == 5:
+            predictImageAi =  solve_captcha_ai(f'./{save_as}'
+                                               )
+            print(predictImage, predictImageAi['prediction'])
+            print((predictImage != predictImageAi['prediction']))
+            if predictImage != predictImageAi['prediction']:
                 os.rename(save_as, f'captchas/{predictImage}.png')
                 logger.info(f'Image renamed to {predictImage}.png')
             else:
