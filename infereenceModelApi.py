@@ -5,7 +5,7 @@ import os
 from mltu.inferenceModel import OnnxInferenceModel
 from mltu.utils.text_utils import ctc_decoder, get_cer
 script_dir = os.path.dirname(__file__)
-relative_path = "Models/02_captcha_to_text/202408021931"
+relative_path = "Models/02_captcha_to_text/202408011255"
 absolute_path = os.path.join(script_dir, relative_path)
 if not os.path.exists(absolute_path):
     raise FileNotFoundError(f"Model path '{absolute_path}' does not exist")
