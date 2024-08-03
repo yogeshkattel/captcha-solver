@@ -1,0 +1,8 @@
+2024-08-02 20:57:50,584 - ImageReader - WARNING - Image Datasets/captcha_images_v2/captchaimg could not be read, returning None.
+2024-08-02 20:57:50,584 - DataProvider - WARNING - Data or annotation is None, marking for removal on epoch end.
+2024-08-02 20:57:50,584 - DataProvider - WARNING - Data or annotation is None, skipping.
+2024-08-02 20:57:55,228 - ImageReader - WARNING - Image Datasets/captcha_images_v2/captchaimg could not be read, returning None.
+2024-08-02 20:57:55,228 - DataProvider - WARNING - Data or annotation is None, marking for removal on epoch end.
+2024-08-02 20:57:55,228 - DataProvider - WARNING - Data or annotation is None, skipping.
+2024-08-02 20:57:55,311 - DataProvider - WARNING - Removing ['Datasets/captcha_images_v2/captchaimg', 'captchaimg'] from dataset.
+2024-08-02 20:57:55,311 - DataProvider - WARNING - Removing ['Datasets/captcha_images_v2/captchaimg', 'captchaimg'] from dataset.
