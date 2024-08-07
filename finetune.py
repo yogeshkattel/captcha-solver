@@ -13,14 +13,18 @@ from mltu.annotations.images import CVImage
 from main.model import train_model
 from main.configs import ModelConfigs
 
-# Set up GPU memory growth
-try: 
-    [tf.config.experimental.set_memory_growth(gpu, True) for gpu in tf.config.experimental.list_physical_devices("GPU")]
-except: 
+import matplotlib.pyplot as plt
+
+# Ensure GPU visibility
+gpus = tf.config.list_physical_devices('GPU')
+print("GPUs available:", gpus)
+try:
+    [tf.config.experimental.set_memory_growth(gpu, True) for gpu in gpus]
+except:
     pass
 
 # Load pre-trained model
-pretrained_model = load_model('./Models/02_captcha_to_text/202408011255/model.h5',compile=False)
+pretrained_model = load_model('./Models/02_captcha_to_text/202408011255/model.h5', compile=False)
 
 # Define configs
 configs = ModelConfigs()
@@ -30,7 +34,7 @@ dataset, vocab, max_len = [], set(), 0
 captcha_path = os.path.join("Datasets", "captcha_images_v2")
 for file in os.listdir(captcha_path):
     file_path = os.path.join(captcha_path, file)
-    label = os.path.splitext(file)[0] 
+    label = os.path.splitext(file)[0]
     dataset.append([file_path, label])
     vocab.update(list(label))
     max_len = max(max_len, len(label))
@@ -49,7 +53,7 @@ data_provider = DataProvider(
         ImageResizer(configs.width, configs.height),
         LabelIndexer(configs.vocab),
         LabelPadding(max_word_length=configs.max_text_length, padding_value=len(configs.vocab))
-        ],
+    ],
 )
 
 # Split dataset
@@ -84,3 +88,27 @@ pretrained_model.fit(
 # Save training and validation datasets as csv files
 train_data_provider.to_csv(os.path.join(configs.model_path, "train.csv"))
 val_data_provider.to_csv(os.path.join(configs.model_path, "val.csv"))
+
+# Visualization function
+def visualize_predictions(data_provider, model, num_samples=5):
+    plt.figure(figsize=(15, 15))
+    for i, (image, label) in enumerate(data_provider):
+        if i >= num_samples:
+            break
+        plt.subplot(num_samples, 2, 2 * i + 1)
+        plt.imshow(image[0])  # Display the image
+        plt.title(f"Label: {label[0]}")
+        plt.axis('off')
+
+        # Predict and display the prediction
+        pred = model.predict(tf.expand_dims(image[0], axis=0))
+        pred_text = "".join([configs.vocab[int(p)] for p in tf.argmax(pred, axis=-1)[0]])
+        plt.subplot(num_samples, 2, 2 * i + 2)
+        plt.imshow(image[0])
+        plt.title(f"Prediction: {pred_text}")
+        plt.axis('off')
+
+    plt.show()
+
+# Visualize some samples from the validation set
+visualize_predictions(val_data_provider, pretrained_model)

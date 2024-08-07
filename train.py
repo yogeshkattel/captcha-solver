@@ -5,6 +5,7 @@ config = tf.compat.v1.ConfigProto()
 config.gpu_options.per_process_gpu_memory_fraction = 1
 session = tf.compat.v1.InteractiveSession(config=config)
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
+import matplotlib.pyplot as plt
 
 from mltu.tensorflow.dataProvider import DataProvider
 from mltu.tensorflow.losses import CTCloss
@@ -108,3 +109,4 @@ model.fit(
 # Save training and validation datasets as csv files
 train_data_provider.to_csv(os.path.join(configs.model_path, "train.csv"))
 val_data_provider.to_csv(os.path.join(configs.model_path, "val.csv"))
+
