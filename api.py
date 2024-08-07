@@ -119,8 +119,6 @@ async def startup_event():
 @app.post("/upload-image/")
 async def upload_image(file: UploadFile , token: str):
     try:
-        # Check token
-        check_token(token)
 
         # Read image file
         contents = await file.read()
